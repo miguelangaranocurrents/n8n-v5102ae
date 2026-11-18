@@ -140,9 +140,11 @@ const fixStringNewLines = (node: types.namedTypes.File): types.namedTypes.File =
 	visit(node, {
 		visitTemplateElement(path) {
 			this.traverse(path);
+			// Only `raw` is escaped for printing; `cooked` is the runtime value and must keep
+			// its real newlines, otherwise the evaluated string contains literal `\n` text.
 			const el = b.templateElement(
 				{
-					cooked: path.node.value.cooked === null ? null : replace(path.node.value.cooked),
+					cooked: path.node.value.cooked,
 					raw: replace(path.node.value.raw),
 				},
 				path.node.tail,
